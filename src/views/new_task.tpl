@@ -1,4 +1,3 @@
-%#template of the form for a new task
 % rebase('base.tpl')
 <p>Add a new task to the ToDo list:</p>
 <form action="/new" method="post">

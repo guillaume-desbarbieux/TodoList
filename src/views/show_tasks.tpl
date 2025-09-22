@@ -1,6 +1,9 @@
 %rebase('base.tpl')
-%#template to generate a HTML table from a list of tuples (or list of lists, or tuple of tuples or ...)
-<p>The open items are as follows:</p>
+
+<a href="/todo?show=open">Show open</a>
+<a href="/todo?show=closed">Show closed</a>
+<a href="/todo?show=all">Show all</a>
+<h3>{{status}} items are as follows:</h3>
 <table border="1">
 %for row in rows:
   <tr>
@@ -11,4 +14,4 @@
   </tr>
 %end
 </table>
-<p><a href="/new">Add a new task</a></p>
+<a href="/new">Add a new task</a>
