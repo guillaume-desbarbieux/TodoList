@@ -1,5 +1,5 @@
 %rebase('base.tpl')
-<h1 class="mb-3"> Todolist de Guillaume, enfin ?<h1>
+<h1 class="mb-3"> Todolist de Guillaume, enfin !!?<h1>
 
 <div class="d-flex gap-2 mb-3">
   <a href="/todo?show=open" class="btn btn-success">Show open</a>
