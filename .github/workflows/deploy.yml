@@ -1,10 +1,24 @@
-- name: Trigger deploy
-  run: |
-    RESPONSE=$(curl -s -w "%{http_code}" -o response.txt -X POST \
-        https://guillaumedbx.pythonanywhere.com/deploy \
-        -H "X-DEPLOY-TOKEN: ${{ secrets.PA_DEPLOY_TOKEN }}")
-    cat response.txt
-    if [ "$RESPONSE" -ne 200 ]; then
-      echo "❌ Déploiement échoué"
-      exit 1
-    fi
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger deploy
+        run: |
+          RESPONSE=$(curl -s -w "%{http_code}" -o response.txt -X POST \
+            https://guillaumedbx.pythonanywhere.com/deploy \
+            -H "X-DEPLOY-TOKEN: ${{ secrets.PA_DEPLOY_TOKEN }}")
+          cat response.txt
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "❌ Déploiement échoué"
+            exit 1
+          fi
