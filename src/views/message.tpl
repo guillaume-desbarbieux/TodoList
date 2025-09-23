@@ -1,3 +1,8 @@
 %rebase('base.tpl')
-<h1>{{message}}</h1>
-<p><a href="/todo">Back to main page</p>
+
+<div class="card shadow-sm text-center">
+  <div class="card-body">
+    <h1 class="card-title mb-3">{{message}}</h1>
+    <a href="/todo" class="btn btn-primary">⬅ Back to main page</a>
+  </div>
+</div>

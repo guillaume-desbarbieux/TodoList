@@ -3,6 +3,7 @@ from bottle import Bottle, template, request, static_file, redirect
 from pathlib import Path
 
 ABSOLUTE_APPLICATION_PATH = Path(__file__).parent
+DB_PATH = ABSOLUTE_APPLICATION_PATH / "todo.db"
 app = Bottle()
 
 
@@ -23,7 +24,7 @@ def todo_list():
         case _:
             return template('message.tpl',
                             message='Wrong query parameter: show must be either open, closed or all.')
-    with sqlite3.connect('todo.db') as connection:
+    with sqlite3.connect(DB_PATH) as connection:
         cursor = connection.cursor()
         cursor.execute(db_query)
         result = cursor.fetchall()
@@ -35,7 +36,7 @@ def todo_list():
 def new_task():
     if request.POST:
         new_task = request.forms.task.strip()
-        with sqlite3.connect('todo.db') as connection:
+        with sqlite3.connect(DB_PATH) as connection:
             cursor = connection.cursor()
             cursor.execute("INSERT INTO todo (task,status) VALUES (?,?)", (new_task, 1))
             new_id = cursor.lastrowid
@@ -54,22 +55,22 @@ def edit_task(number):
             status = 1
         else:
             status = 0
-        with sqlite3.connect('todo.db') as connection:
+        with sqlite3.connect(DB_PATH) as connection:
             cursor = connection.cursor()
             cursor.execute("UPDATE todo SET task = ?, status = ? WHERE id LIKE ?", (new_data, status, number))
         return template('message.tpl',
                         message=f'The task number {number} was successfully updated')
     else:
-        with sqlite3.connect('todo.db') as connection:
+        with sqlite3.connect(DB_PATH) as connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT task FROM todo WHERE id LIKE ?", (number,))
+            cursor.execute("SELECT task, status FROM todo WHERE id LIKE ?", (number,))
             current_data = cursor.fetchone()
         return template('edit_task', current_data=current_data, number=number)
 
 
 @app.route('/as_json/<number:re:[0-9]+>')
 def task_as_json(number):
-    with sqlite3.connect('todo.db') as connection:
+    with sqlite3.connect(DB_PATH) as connection:
         cursor = connection.cursor()
         cursor.execute("SELECT id, task, status FROM todo WHERE id LIKE ?", (number,))
         result = cursor.fetchone()
