@@ -98,10 +98,10 @@ def error_404(error):
 @app.route('/deploy/<token>')
 def deploy(token):
     if token != os.environ.get('DEPLOY_TOKEN'):
-        return template('message.tpl', message=f"Wrong token! : {os.environ.get('DEPLOY_TOKEN')}")
+        return template('message.tpl', message="Wrong token!")
 
     result = subprocess.run(
-        ["python3", "/home/guillaumedbx/mysite/TodoList/deploy.py"],
+        ["python3", "/home/guillaumedbx/mysite/TodoList/src/deploy.py"],
         capture_output=True,
         text=True
     )
@@ -109,7 +109,7 @@ def deploy(token):
     if result.returncode == 0:
         return template('message.tpl', message=result.stdout)
     else:
-        return template('message.tpl', message=f"❌ Deploy script failed:\n{result.stderr}")
+        return template('message.tpl', message=f"❌ Deploy script failed:\n{result.stde}")
 
 
 if __name__ == '__main__':
