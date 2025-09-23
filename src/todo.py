@@ -98,7 +98,7 @@ def error_404(error):
 @app.route('/deploy/<token>')
 def deploy(token):
     if token != os.environ.get('DEPLOY_TOKEN'):
-        return template('message.tpl', message='Wrong token!')
+        return template('message.tpl', message='Wrong token! : {os.environ.get("DEPLOY_TOKEN")}')
 
     result = subprocess.run(
         ["python3", "/home/guillaumedbx/mysite/TodoList/deploy.py"],
