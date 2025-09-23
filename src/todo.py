@@ -1,7 +1,9 @@
+import os
 import sqlite3
-from bottle import Bottle, template, request, static_file, redirect
+from bottle import Bottle, template, request, static_file, redirect, TEMPLATE_PATH
 from pathlib import Path
 
+TEMPLATE_PATH.insert(0, os.path.join(os.path.dirname(__file__), 'views'))
 ABSOLUTE_APPLICATION_PATH = Path(__file__).parent
 DB_PATH = ABSOLUTE_APPLICATION_PATH / "todo.db"
 app = Bottle()
