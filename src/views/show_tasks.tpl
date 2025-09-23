@@ -1,4 +1,5 @@
 %rebase('base.tpl')
+<h1 class="mb-3 text-capitalize"> Totdolist de Guillaume<h1>
 
 <div class="d-flex gap-2 mb-3">
   <a href="/todo?show=open" class="btn btn-success">Show open</a>
