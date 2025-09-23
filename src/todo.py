@@ -106,10 +106,7 @@ def deploy():
         capture_output=True,
         text=True
     )
-    if result.returncode != 0:
-        return f"❌ Déploiement échoué :\n{result.stdout}\n{result.stderr}", 500
-    return f"✅ Déploiement déclenché :\n{result.stdout}", 200
-
+    return result.stdout + "\n" + result.stderr, 200 if result.returncode == 0 else 500
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8080, debug=True, reloader=True, server='waitress')
