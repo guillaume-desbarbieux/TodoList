@@ -2,7 +2,7 @@ import os
 import sqlite3
 import subprocess
 
-from bottle import Bottle, template, request, static_file, redirect, TEMPLATE_PATH, abort
+from bottle import Bottle, template, request, static_file, redirect, TEMPLATE_PATH, abort, Response
 from pathlib import Path
 
 TEMPLATE_PATH.insert(0, os.path.join(os.path.dirname(__file__), 'views'))
@@ -97,12 +97,23 @@ def error_404(error):
 
 @app.post("/deploy")
 def deploy():
+    import subprocess, sys
+
     token = request.headers.get("X-DEPLOY-TOKEN")
     if token != os.environ.get("DEPLOY_TOKEN"):
         abort(403, "Forbidden")
 
-    os.system("python3 deploy.py &")
-    return "✅ Deploy triggered"
+    # Exécuter le script et capturer stdout/stderr
+    result = subprocess.run(
+        [sys.executable, "/home/guillaumedbx/mysite/deploy.py"],
+        capture_output=True,
+        text=True
+    )
+
+    output = result.stdout + "\n" + result.stderr
+    status = 200 if result.returncode == 0 else 500
+
+    return Response(output, status=status, content_type="text/plain")
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8080, debug=True, reloader=True, server='waitress')
