@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import subprocess
+
 from bottle import Bottle, template, request, static_file, redirect, TEMPLATE_PATH
 from pathlib import Path
 
@@ -92,6 +94,22 @@ def send_static_file(filepath):
 def error_404(error):
     ROOT_PATH = ABSOLUTE_APPLICATION_PATH / 'static'
     return static_file("404.html", root=ROOT_PATH)
+
+@app.route('/deploy/<token>')
+def deploy(token):
+    if token != os.environ.get('DEPLOY_TOKEN'):
+        return template('message.tpl', message='Wrong token!')
+
+    result = subprocess.run(
+        ["python3", "/home/guillaumedbx/mysite/TodoList/deploy.py"],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode == 0:
+        return template('message.tpl', message=result.stdout)
+    else:
+        return template('message.tpl', message=f"❌ Deploy script failed:\n{result.stderr}")
 
 
 if __name__ == '__main__':
