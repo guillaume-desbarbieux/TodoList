@@ -2,7 +2,7 @@ import os
 import sqlite3
 import subprocess
 
-from bottle import Bottle, template, request, static_file, redirect, TEMPLATE_PATH
+from bottle import Bottle, template, request, static_file, redirect, TEMPLATE_PATH, abort
 from pathlib import Path
 
 TEMPLATE_PATH.insert(0, os.path.join(os.path.dirname(__file__), 'views'))
@@ -95,22 +95,14 @@ def error_404(error):
     ROOT_PATH = ABSOLUTE_APPLICATION_PATH / 'static'
     return static_file("404.html", root=ROOT_PATH)
 
-@app.route('/deploy/<token>')
-def deploy(token):
-    if token != os.environ.get('DEPLOY_TOKEN'):
-        return template('message.tpl', message="Wrong token!")
+@app.post("/deploy")
+def deploy():
+    token = request.headers.get("X-DEPLOY-TOKEN")
+    if token != os.environ.get("DEPLOY_TOKEN"):
+        abort(403, "Forbidden")
 
-    result = subprocess.run(
-        ["python3", "/home/guillaumedbx/mysite/TodoList/src/deploy.py"],
-        capture_output=True,
-        text=True
-    )
-
-    if result.returncode == 0:
-        return template('message.tpl', message=result.stdout)
-    else:
-        return template('message.tpl', message=f"❌ Deploy script failed:\n{result.stde}")
-
+    os.system("python3 deploy.py &")
+    return "✅ Deploy triggered"
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8080, debug=True, reloader=True, server='waitress')
